@@ -6,7 +6,7 @@ export type Member = {
     slackId: string;
 };
 
-export const parseMember = (data: any) => {
+export function parseMember(data: any) {
     return {
         name: String(data.name || ""),
         job: String(data.job || ""),
