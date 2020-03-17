@@ -1,7 +1,7 @@
 {
   "name": "lunch-master",
   "scripts": {
-    "lint": "tslint --project tsconfig.json",
+    "lint": "tslint --project tsconfig.json --fix",
     "build": "tsc",
     "push": "clasp push"
   },

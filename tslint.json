@@ -71,6 +71,8 @@
     // Disallow duplicate imports in the same file.
     "no-duplicate-imports": true,
 
+    "quotemark": [true, "double", "avoid-escape", "avoid-template"],
+    "indent": [true, "spaces", 4],
 
     // -- Strong Warnings --
     // These rules should almost never be needed, but may be included due to legacy code.
