@@ -5,6 +5,7 @@ type IncomingWebhookSendArguments = {
     channel?: string;
     text: string;
     link_names?: boolean;
+    attachments?: any;
 };
 
 export default function notifySlack(url: string, args: IncomingWebhookSendArguments) {
