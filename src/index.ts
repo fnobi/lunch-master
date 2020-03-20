@@ -2,13 +2,15 @@ import notifySlack from "~/lib/notifySlack";
 import captureSheetScheme from "~/lib/captureSheetScheme";
 import importConfigFromSheet from "~/local/importConfigFromSheet";
 import makeSlackAttachment from "~/local/makeSlackAttachment";
+import makeGroups from "~/local/makeGroups";
 import { Member, parseMember, Shop, parseShop } from "~/const";
 
 export default async function main() {
     const {
         slackWebhook,
         slackUserName = "",
-        slackIconEmoji = ""
+        slackIconEmoji = "",
+        groupMax
     } = importConfigFromSheet("config");
 
     const memberSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("メンバー");
@@ -35,12 +37,18 @@ export default async function main() {
         ]
     }) : [];
 
+    const groups = makeGroups(members, shops, {
+        groupMax: Number(groupMax || 0)
+    });
+
     if (slackWebhook) {
-        await notifySlack(slackWebhook, {
-            username: slackUserName,
-            icon_emoji: slackIconEmoji ? slackIconEmoji : "",
-            text: `:raising_hand: ランチに行くよ〜！\n${members.map(({name, slackId}) => slackId ? `<@${slackId}>` : name).join(" ")}`,
-            attachments: shops.map(shop => makeSlackAttachment(shop))
-        });
+        await Promise.all(
+            groups.map((g) => notifySlack(slackWebhook, {
+                username: slackUserName,
+                icon_emoji: slackIconEmoji ? slackIconEmoji : "",
+                text: `:raising_hand: ランチに行くよ〜！\n${g.members.map(({name, slackId}) => slackId ? `<@${slackId}>` : name).join(" ")}`,
+                attachments: [makeSlackAttachment(g.shop)]
+            }))
+        );
     }
 }
